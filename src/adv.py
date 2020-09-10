@@ -1,4 +1,13 @@
 from room import Room
+from player import Player
+
+import emoji
+from termcolor import colored
+from colorama import init
+from time import sleep
+from os import system, name
+
+init()
 
 # Declare all the rooms
 
@@ -38,6 +47,7 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
+player = Player('Sean', room['outside'])
 
 # Write a loop that:
 #
@@ -49,3 +59,75 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+
+game = False
+
+
+def clear():
+    if name == 'nt':
+        _ = system('cls')
+    else:
+        _ = system('clear')
+
+
+def game_intro():
+    global game
+    clear()
+    while game == False:
+        print(
+            f'Welcome, {player.name}! Please type "play" to start game or "help" for instructions')
+        command = input('> ').lower()
+        instructions = {"movement:": ["n", "s", "e",
+                                      "w"], "other commands:": "q to quit"}
+
+        if command == 'play':
+            game = True
+            clear()
+            sleep(.2)
+        elif command == 'help':
+            for k, v in instructions.items():
+                print(k, v)
+        else:
+            print(colored('Wrong command doofus!', 'red'))
+
+
+game_intro()
+
+while game == True:
+    print(
+        f"Location: {player.current_room.name}\n")
+    print(f"{player.current_room.description}")
+
+    command = input('> ').lower()
+
+    if command == 'n':
+        try:
+            player.current_room = player.current_room.n_to
+        except:
+            print(colored("Can't go this way!", 'red'))
+    elif command == 'e':
+        try:
+
+            player.current_room = player.current_room.e_to
+        except:
+            print(colored("Can't go this way!", 'red'))
+    elif command == 's':
+        try:
+            player.current_room = player.current_room.s_to
+        except:
+            print(colored("Can't go this way!", 'red'))
+    elif command == 'w':
+        try:
+            player.current_room = player.current_room.w_to
+        except:
+            print(colored('Wrong direction!', 'red'))
+    elif command == 'q':
+        print(
+            f'Sorry to see you go {emoji.emojize(":worried_face:")}')
+        sleep(1)
+        clear()
+        game = False
+        game_intro()
+    else:
+        print(colored('Wrong command doofus!', 'red'))
